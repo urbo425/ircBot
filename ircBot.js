@@ -25,7 +25,7 @@ bot.addListener("join", function(channel, who) {
 			var username = config.ops[i];
 
 			if(who == username) {
-				bot.send('MODE', config.channel, '+o', who);
+				bot.send('MODE', config.channels, '+o', who);
 			}
 		}
 	}
