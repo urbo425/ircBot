@@ -1,5 +1,5 @@
 // Load the configuration file
-var config = require('./config.js');
+var config = require('./config.json');
 
 if(!config.server) {
 	console.log('no config file was found...exiting.');
@@ -29,4 +29,8 @@ bot.addListener("join", function(channel, who) {
 			}
 		}
 	}
+});
+
+client.addListener('error', function(message) {
+	console.log('error: ', message);
 });
