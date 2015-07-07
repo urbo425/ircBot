@@ -1,6 +1,6 @@
 {
     channels: ["#SomeChannel"],
-	server: "irc.freenode.net",
-	botName: "BroBot",
+    server: "irc.freenode.net",
+    botName: "BroBot",
     ops:[]
 }
