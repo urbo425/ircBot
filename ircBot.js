@@ -25,12 +25,12 @@ bot.addListener("join", function(channel, who) {
 			var username = config.ops[i];
 
 			if(who == username) {
-				bot.send('MODE', '#SomeChannel', '+o', who);
+				bot.send('MODE', config.channel, '+o', who);
 			}
 		}
 	}
 });
 
-client.addListener('error', function(message) {
+bot.addListener('error', function(message) {
 	console.log('error: ', message);
 });
