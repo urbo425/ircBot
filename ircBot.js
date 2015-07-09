@@ -4,6 +4,8 @@ var config = require('./config.json');
 if(!config.server) {
 	console.log('no config file was found...exiting.');
 	process.exit();
+} else {
+	console.log('App Started Successfully!');
 }
 
 // Get the lib
@@ -20,7 +22,7 @@ bot.addListener("join", function(channel, who) {
 	bot.say(channel, who + "...sup brah...welcome back!");
 
 	//op user in array
-	if(config.ops) {
+	/*if(config.ops) {
 		for(var i = 0; i < config.ops.length; i++) {
 			var username = config.ops[i];
 
@@ -28,6 +30,21 @@ bot.addListener("join", function(channel, who) {
 				bot.send('MODE', config.channels, '+o', who);
 			}
 		}
+	}*/
+});
+
+// Listens for messages to the channel
+bot.addListener('message' + config.channels, function (from, message) {
+	if (message == config.botMessage + " " + config.botName) {
+		console.log(from + ' => ' + config.channels + ': ' + message);
+		bot.say(config.channels, "yo dude!");
+	}
+});
+
+bot.addListener('pm', function (from, message) {
+	if (message == config.opPhrase) {
+		bot.send('MODE', config.channels, '+o', from);
+    	console.log('Gave OP to user: ' + from + ' in ' + config.channels);
 	}
 });
 
