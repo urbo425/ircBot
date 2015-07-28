@@ -1,7 +1,7 @@
 {
 	"channels": ["#cme"],
 	"server": "irc.freenode.net",
-	"botName": "cmeBot2",
+	"botName": "cmeBot-beta",
 	"opPhrase": "op",
 	"botMessage": "hiya",
 	"pullRequests": {

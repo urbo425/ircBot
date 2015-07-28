@@ -2,6 +2,13 @@
 var config = require('./config.json');
 var request = require('request');
 var afkMessages = {};
+var commands = [
+	"Commands:",
+	"!list                    --- shows this list",
+	"pull:<repo>              --- sends pull request to repository (dealers is the only current repo)",
+	"afk:<username>@<message> --- sends afk message to user who can use !afk to fetch this listings",
+	"!afk                     --- fetches afk messages for your username",
+];
 
 if(!config.server) {
 	console.log('no config file was found...exiting.');
@@ -21,10 +28,21 @@ var bot = new irc.Client(config.server, config.botName, {
 //here we require the brain file which is basically a class so we init with bot;
 var Brain = require('./lib/brain')(bot);
 
+Brain.defineResponse({
+	type:"public",
+	message:"!list",
+	matching:"exact",
+	handle:function() {
+		commands.forEach(function(message) {
+			Brain.instance.say(config.channels, message);
+		});
+	}
+});
+
 //handle pull requests
 Brain.defineResponse({
-	type:'private',
-	message:'pull:',
+	type:'public',
+	message:'!pull:',
 	matching:'loose',
 	handle:function(message) {
 		var pullRequest = message.substring(message.indexOf(":") + 1);
@@ -59,7 +77,7 @@ Brain.defineResponse({
 });
 
 Brain.defineResponse({
-	type:'private',
+	type:'public',
 	message:"afk:",
 	matching:'loose',
 	handle:function(message, from) {
@@ -78,8 +96,8 @@ Brain.defineResponse({
 });
 
 Brain.defineResponse({
-	type:'private',
-	message:"get afk",
+	type:'public',
+	message:"!afk",
 	matching:'exact',
 	handle:function(message, from) {
 		if(afkMessages[from] && afkMessages[from].length > 0) {
