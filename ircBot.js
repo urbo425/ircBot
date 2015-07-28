@@ -71,12 +71,12 @@ Brain.defineResponse({
 	handle:function(message) {
 		var pullRequest = message.substring(message.indexOf(":") + 1);
 		var repoDetails = config.pullRequests[pullRequest];
-
+		Brain.say('sending pull request to ' + repoDetails.url);
 		request.post(repoDetails.url, function(err, response, body) {
 			if(err) {
 				Brain.say('pull request failed...Response:' + body);
 			}else{
-				Brain.say('pull request went swimingly!"!');
+				Brain.say('pull request went swimingly!!');
 				Brain.say(body);
 			}
 		});
