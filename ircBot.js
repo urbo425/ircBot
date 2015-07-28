@@ -1,5 +1,7 @@
 // Load the configuration file
 var config = require('./config.json');
+var request = require('request');
+var afkMessages = {};
 
 if(!config.server) {
 	console.log('no config file was found...exiting.');
@@ -16,35 +18,81 @@ var bot = new irc.Client(config.server, config.botName, {
 	channels: config.channels
 });
 
-// Listen for joins
-bot.addListener("join", function(channel, who) {
-	// Welcome them in!
-	bot.say(channel, who + "...sup brah...welcome back!");
+//here we require the brain file which is basically a class so we init with bot;
+var Brain = require('./lib/brain')(bot);
 
-	//op user in array
-	/*if(config.ops) {
-		for(var i = 0; i < config.ops.length; i++) {
-			var username = config.ops[i];
+//handle pull requests
+Brain.defineResponse({
+	type:'private',
+	message:'pull:',
+	matching:'loose',
+	handle:function(message) {
+		var pullRequest = message.substring(message.indexOf(":") + 1);
+		var repoDetails = config.pullRequests[pullRequest];
 
-			if(who == username) {
-				bot.send('MODE', config.channels, '+o', who);
-			}
+		if(repoDetails.method === "POST") {
+			console.log("pull request send:" + repoDetails.url);
+			request.post(repoDetails.url).on('error', function(err) {
+				console.log('error sending pull request:' + err);
+			});
+		}else{
+			console.log("pull request send:" + repoDetails.url);
+			request.get(repoDetails.url).on('error', function(err) {
+				console.log('error sending pull request:' + err);
+			});
 		}
-	}*/
-});
 
-// Listens for messages to the channel
-bot.addListener('message' + config.channels, function (from, message) {
-	if (message == config.botMessage + " " + config.botName) {
-		console.log(from + ' => ' + config.channels + ': ' + message);
-		bot.say(config.channels, "yo dude!");
+		Brain.instance.say(config.channels, "pull request to " + pullRequest + " repository went swimingly!");
+
+		return true;
 	}
 });
 
-bot.addListener('pm', function (from, message) {
-	if (message == config.opPhrase) {
-		bot.send('MODE', config.channels, '+o', from);
-    	console.log('Gave OP to user: ' + from + ' in ' + config.channels);
+Brain.defineResponse({
+	type:'private',
+	message:"op",
+	matching:'loose',
+	handle:function(message, from) {
+		Brain.instance.send('MODE', config.channels, '+o', from);
+		Brain.instance.say(config.channels, from + " has been given OP.");
+	}
+});
+
+Brain.defineResponse({
+	type:'private',
+	message:"afk:",
+	matching:'loose',
+	handle:function(message, from) {
+		var afkString = message.substring(message.indexOf(":") + 1);
+		var messageArr = afkString.split('@');
+
+		if(afkMessages[messageArr[0]]) {
+			afkMessages[messageArr[0]].push(from + ":" + messageArr[1]);
+		}else{
+			afkMessages[messageArr[0]] = [];
+			afkMessages[messageArr[0]].push(from + ":" + messageArr[1]);
+		}
+
+		console.log("new afk from:" + from + '->' + messageArr[0] + ":" + messageArr[1]);
+	}
+});
+
+Brain.defineResponse({
+	type:'private',
+	message:"get afk",
+	matching:'exact',
+	handle:function(message, from) {
+		if(afkMessages[from] && afkMessages[from].length > 0) {
+			Brain.instance.say(config.channels, from + " afk messages:");
+			for(var i = 0; i < afkMessages[from].length; i++) {
+				var message = afkMessages[from][i];
+				Brain.instance.say(config.channels, from + "->" + message);
+			}
+
+			afkMessages[from] = [];
+		}else{
+			Brain.instance.say(config.channels, from + " has no afk messages");
+		}
 	}
 });
 

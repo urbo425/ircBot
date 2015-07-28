@@ -1,0 +1,29 @@
+{
+  "name": "ircBot",
+  "version": "0.0.1",
+  "description": "A simple Node.JS IRC Bot to keep channel alive and OP users.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/urbo425/ircBot.git"
+  },
+  "keywords": [
+    "irc",
+    "bot",
+    "ircBot"
+  ],
+  "author": "Todd + Travier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/urbo425/ircBot/issues"
+  },
+  "dependencies": {
+    "extend": "^3.0.0",
+    "irc": "^0.3.12",
+    "request": "^2.60.0",
+    "tough-cookie": "^2.0.0"
+  }
+}

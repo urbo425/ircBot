@@ -1,7 +1,13 @@
 {
-	"channels": ["#SomeChannel"],
+	"channels": ["#cme"],
 	"server": "irc.freenode.net",
-	"botName": "SomeBotName",
-	"opPhrase": "op me brah",
-	"botMessage": "hi"
+	"botName": "cmeBot2",
+	"opPhrase": "op",
+	"botMessage": "hiya",
+	"pullRequests": {
+		"dealers":{
+			"url":"http://advanced2447.inmotionhosting.com:3000/repo/dealers",
+			"method":"POST"
+		}
+	}
 }
