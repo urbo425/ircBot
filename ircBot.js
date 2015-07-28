@@ -14,7 +14,8 @@ if(!config.server) {
 	console.log('no config file was found...exiting.');
 	process.exit();
 } else {
-	console.log('Bot booted!');
+	console.log(config.botName + ' has booted successfully!');
+	console.log(config.botName + ' is attempting to join ' + config.channels + '...');
 }
 
 // Get the lib
@@ -27,6 +28,21 @@ var bot = new irc.Client(config.server, config.botName, {
 
 //here we require the brain file which is basically a class so we init with bot;
 var Brain = require('./lib/brain')(bot, config);
+var Events = require('./lib/events')(bot);
+
+Events.on('join', function(channel, nick, message) {
+	if(nick === config.botName) {
+		console.log(config.botName + ' has joined ' + config.channels + ' with success!');
+		return;
+	}
+
+	Brain.say('welcome to the chat ' + nick + '!');
+
+	if(afkMessages[nick].length > 0) {
+		var total = afkMessages[nick].length;
+		Brain.say(nick + ' you have ' + total + ' afk messages waiting for you. use the !afk command!');
+	}
+});
 
 Brain.defineResponse({
 	type:"public",
@@ -43,12 +59,14 @@ Brain.defineResponse({
 
 Brain.defineResponse({
 	type:"public",
-	message:'ask:',
+	message:'',
 	matching:"loose",
 	handle:function(message, from) {
 		var message = message.substring(message.indexOf(":") + 1);
 		var response = Brain.respond(message);
-		Brain.say(from + "::" + response);
+
+		if(response)
+			Brain.say(from + "::" + response);
 	}
 })
 
