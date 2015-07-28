@@ -14,7 +14,7 @@ if(!config.server) {
 	console.log('no config file was found...exiting.');
 	process.exit();
 } else {
-	console.log('App Started Successfully!');
+	console.log('Bot booted!');
 }
 
 // Get the lib
@@ -26,7 +26,31 @@ var bot = new irc.Client(config.server, config.botName, {
 });
 
 //here we require the brain file which is basically a class so we init with bot;
-var Brain = require('./lib/brain')(bot);
+var Brain = require('./lib/brain')(bot, config);
+
+Brain.defineResponse({
+	type:"public",
+	message:'teach:',
+	matching:"loose",
+	handle:function(message, from) {
+		var message = message.substring(message.indexOf(":") + 1);
+		var message = message.split("@");
+		console.log('Trained:' + message[0] + " -> " + message[1]);
+		Brain.train(message[0], message[1]);
+		Brain.say(from + " thanks for teaching me something!");
+	}
+})
+
+Brain.defineResponse({
+	type:"public",
+	message:'ask:',
+	matching:"loose",
+	handle:function(message, from) {
+		var message = message.substring(message.indexOf(":") + 1);
+		var response = Brain.respond(message);
+		Brain.say(from + "::" + response);
+	}
+})
 
 Brain.defineResponse({
 	type:"public",
@@ -48,19 +72,14 @@ Brain.defineResponse({
 		var pullRequest = message.substring(message.indexOf(":") + 1);
 		var repoDetails = config.pullRequests[pullRequest];
 
-		if(repoDetails.method === "POST") {
-			console.log("pull request send:" + repoDetails.url);
-			request.post(repoDetails.url).on('error', function(err) {
-				console.log('error sending pull request:' + err);
-			});
-		}else{
-			console.log("pull request send:" + repoDetails.url);
-			request.get(repoDetails.url).on('error', function(err) {
-				console.log('error sending pull request:' + err);
-			});
-		}
-
-		Brain.instance.say(config.channels, "pull request to " + pullRequest + " repository went swimingly!");
+		request.post(repoDetails.url, function(err, response, body) {
+			if(err) {
+				Brain.say('pull request failed...Response:' + body);
+			}else{
+				Brain.say('pull request went swimingly!"!');
+				Brain.say(body);
+			}
+		});
 
 		return true;
 	}
