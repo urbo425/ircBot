@@ -60,6 +60,16 @@ Brain.defineResponse({
 	}
 });
 
+Brain.defineResponse({
+	type:'private',
+	message:'say:',
+	matching:'loose',
+	handle:function(message) {
+		message = message.substring(message.indexOf(":") + 1);
+		Brain.say(message);
+	}
+});
+
 //handle pull requests
 Brain.defineResponse({
 	type:'public',
