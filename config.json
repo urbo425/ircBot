@@ -1,13 +1,12 @@
 {
-	"channels": ["#cme"],
+	"channels": ["#cme2"],
 	"server": "irc.freenode.net",
 	"botName": "cmeBot-beta",
 	"opPhrase": "op",
 	"botMessage": "hiya",
 	"pullRequests": {
 		"dealers":{
-			"url":"http://advanced2447.inmotionhosting.com:3000/repo/dealers",
-			"method":"POST"
+			"url":"http://advanced2447.inmotionhosting.com:3000/repo/dealers"
 		}
 	}
 }

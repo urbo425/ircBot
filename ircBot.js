@@ -1,7 +1,12 @@
 // Load the configuration file
 var config = require('./config.json');
 var request = require('request');
-var afkMessages = {};
+var Redbrick = require('redbrick');
+var twss = require('twss');
+
+var db = new Redbrick('./store');
+var afkMessages = db.get('afks');
+
 var commands = [
 	"Commands:",
 	"!list                    --- shows this list",
@@ -38,7 +43,7 @@ Events.on('join', function(channel, nick, message) {
 
 	Brain.say('welcome to the chat ' + nick + '!');
 
-	if(afkMessages[nick].length > 0) {
+	if(afkMessages[nick] && afkMessages[nick].length > 0) {
 		var total = afkMessages[nick].length;
 		Brain.say(nick + ' you have ' + total + ' afk messages waiting for you. use the !afk command!');
 	}
@@ -46,27 +51,12 @@ Events.on('join', function(channel, nick, message) {
 
 Brain.defineResponse({
 	type:"public",
-	message:'teach:',
+	message:"",
 	matching:"loose",
-	handle:function(message, from) {
-		var message = message.substring(message.indexOf(":") + 1);
-		var message = message.split("@");
-		console.log('Trained:' + message[0] + " -> " + message[1]);
-		Brain.train(message[0], message[1]);
-		Brain.say(from + " thanks for teaching me something!");
-	}
-})
-
-Brain.defineResponse({
-	type:"public",
-	message:'',
-	matching:"loose",
-	handle:function(message, from) {
-		var message = message.substring(message.indexOf(":") + 1);
-		var response = Brain.respond(message);
-
-		if(response)
-			Brain.say(from + "::" + response);
+	handle:function(message) {
+		if(twss.is(message)) {
+			Brain.say("thats what she said! LOLOLOLOLOL");
+		}
 	}
 })
 
