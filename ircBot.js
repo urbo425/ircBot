@@ -51,17 +51,6 @@ Events.on('join', function(channel, nick, message) {
 
 Brain.defineResponse({
 	type:"public",
-	message:"",
-	matching:"loose",
-	handle:function(message) {
-		if(twss.is(message)) {
-			Brain.say("thats what she said! LOLOLOLOLOL");
-		}
-	}
-})
-
-Brain.defineResponse({
-	type:"public",
 	message:"!list",
 	matching:"exact",
 	handle:function() {
