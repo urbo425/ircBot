@@ -66,13 +66,14 @@ Brain.defineResponse({
 		Brain.say(joke.title);
 
 		setTimeout(function () {
+			joke.body.push('Reddit Score:' + joke.score);
 			joke.body.forEach(function(message) {
 				if(!message || message === "")
 					return;
 
 				Brain.say(message);
 			})
-		}, 5000);
+		}, 7000);
 	}
 })
 
