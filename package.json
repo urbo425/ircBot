@@ -23,10 +23,12 @@
   "dependencies": {
     "extend": "^3.0.0",
     "irc": "^0.3.12",
+    "jaraw": "^0.4.0-beta3",
     "natural-brain": "^0.1.0",
     "redbrick": "0.0.0",
     "request": "^2.60.0",
     "tough-cookie": "^2.0.0",
-    "twss": "^0.1.6"
+    "twss": "^0.1.6",
+    "underscore.string": "^3.1.1"
   }
 }

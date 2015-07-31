@@ -1,11 +1,19 @@
 // Load the configuration file
 var config = require('./config.json');
 var request = require('request');
-var Redbrick = require('redbrick');
-var twss = require('twss');
 
-var db = new Redbrick('./store');
-var afkMessages = db.get('afks');
+var Jokes = require('./lib/jokes')();
+
+/*reddit.get('/r/jokes.json', function(err, res) {
+	var jokes = JSON.parse(res);
+	console.log(jokes.data.children[1].data.title);
+	var body = s.stripTags(s.unescapeHTML(jokes.data.children[1].data.selftext_html));
+	body = body.replace(/&quot;/g,'"');
+	body = body.replace(/&#39;/g, '"');
+	console.log(s.lines(body));
+});*/
+
+var afkMessages = [];
 
 var commands = [
 	"Commands:",
@@ -51,6 +59,25 @@ Events.on('join', function(channel, nick, message) {
 
 Brain.defineResponse({
 	type:"public",
+	message:"!joke",
+	matching:"exact",
+	handle:function() {
+		var joke = Jokes.pop();
+		Brain.say(joke.title);
+
+		setTimeout(function () {
+			joke.body.forEach(function(message) {
+				if(!message || message === "")
+					return;
+
+				Brain.say(message);
+			})
+		}, 5000);
+	}
+})
+
+Brain.defineResponse({
+	type:"public",
 	message:"!list",
 	matching:"exact",
 	handle:function() {
@@ -66,6 +93,7 @@ Brain.defineResponse({
 	matching:'loose',
 	handle:function(message) {
 		message = message.substring(message.indexOf(":") + 1);
+
 		Brain.say(message);
 	}
 });
