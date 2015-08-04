@@ -3,6 +3,7 @@ var config = require('./config.json');
 var request = require('request');
 
 var Jokes = require('./lib/jokes')();
+var Quotes = require('./lib/quotes')();
 
 /*reddit.get('/r/jokes.json', function(err, res) {
 	var jokes = JSON.parse(res);
@@ -74,6 +75,17 @@ Brain.defineResponse({
 				Brain.say(message);
 			})
 		}, 7000);
+	}
+})
+
+Brain.defineResponse({
+	type:"public",
+	message:"!quote",
+	matching:"exact",
+	handle:function() {
+		var quote = Quotes.pop();
+		Brain.say(quote.title);
+
 	}
 })
 
