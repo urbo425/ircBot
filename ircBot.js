@@ -45,6 +45,8 @@ var bot = new irc.Client(config.server, config.botName, {
 var Brain = require('./lib/brain')(bot, config);
 var Events = require('./lib/events')(bot);
 
+var BlackJack = require('./lib/blackjack')(Brain);
+
 Events.on('join', function(channel, nick, message) {
 	if(nick === config.botName) {
 		console.log(config.botName + ' has joined ' + config.channels + ' with success!');
