@@ -3,6 +3,7 @@ var config = require('./config.json');
 var request = require('request');
 
 var Jokes = require('./lib/jokes')();
+var GuessingGame = require('./lib/guess')();
 var Quotes = require('./lib/quotes')();
 
 /*reddit.get('/r/jokes.json', function(err, res) {
@@ -57,6 +58,33 @@ Events.on('join', function(channel, nick, message) {
 		Brain.say(nick + ' you have ' + total + ' afk messages waiting for you. use the !afk command!');
 	}
 });
+
+Brain.defineResponse({
+	type:'public',
+	message:"!game",
+	matching:"exact",
+	handle:function(message, from) {
+		Brain.say(from + ' is starting the guessing game!');
+		Brain.say('use !guess:<number> to submit your guess!');
+		GuessingGame.start();
+	}
+});
+
+Brain.defineResponse({
+	type:'public',
+	message:"!guess:",
+	matching:"loose",
+	handle:function(message, from) {
+		var guess = message.substring(message.indexOf(":") + 1);
+
+		var response = GuessingGame.check(from, guess);
+		Brain.say(response.message);
+
+		if(response.result) {
+			Brain.say('Game over! Thanks for playing:' + GuessingGame.users);
+		}
+	}
+})
 
 Brain.defineResponse({
 	type:"public",
